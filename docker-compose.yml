@@ -1,0 +1,14 @@
+version: '3.7'
+
+services:
+  template.webapi:
+    image: ${DOCKER_REGISTRY-}template
+    build:
+      context: .
+      dockerfile: src/DeliveryService.WebApi/Dockerfile
+
+  template.messageprocessor:
+    image: ${DOCKER_REGISTRY-}messageprocessor
+    build:
+      context: .
+      dockerfile: src/DeliveryService.MessageProcessor/Dockerfile

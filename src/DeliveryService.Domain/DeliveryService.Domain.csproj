@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <IsPackable>true</IsPackable>
+    <PackageId>DeliveryService.Domain</PackageId>
+    <Authors>Kashif Soofi</Authors>
+    <Description>DeliveryService Domain</Description>
+    <Version>$(Version)</Version>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DeliveryService.Contracts\DeliveryService.Contracts.csproj" />
+  </ItemGroup>
+</Project>

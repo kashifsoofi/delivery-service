@@ -1,0 +1,8 @@
+USE DeliveryService;
+
+CREATE TABLE IF NOT EXISTS Delivery (
+    ClusteredId INT NOT NULL PRIMARY KEY,
+    Id CHAR(36) NOT NULL UNIQUE,
+    CreatedOn DATETIME NOT NULL,
+    UpdatedOn DATETIME NOT NULL
+) ENGINE=INNODB;

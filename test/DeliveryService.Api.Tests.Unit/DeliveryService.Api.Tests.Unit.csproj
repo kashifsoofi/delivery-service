@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp5.0</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentAssertions" Version="5.10.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.0" />
+    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="DeliveryService.WebApi.Tests.Acceptance\obj\Debug\netcoreapp2.2\DeliveryService.WebApi.Tests.Acceptance.assets.cache" />
+    <None Remove="DeliveryService.WebApi.Tests.Acceptance\obj\DeliveryService.WebApi.Tests.Acceptance.csproj.nuget.dgspec.json" />
+    <None Remove="DeliveryService.WebApi.Tests.Acceptance\obj\DeliveryService.WebApi.Tests.Acceptance.csproj.nuget.g.props" />
+    <None Remove="DeliveryService.WebApi.Tests.Acceptance\obj\DeliveryService.WebApi.Tests.Acceptance.csproj.nuget.g.targets" />
+    <None Remove="DeliveryService.WebApi.Tests.Acceptance\obj\DeliveryService.WebApi.Tests.Acceptance.csproj.nuget.cache" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="DeliveryService.WebApi.Tests.Acceptance\UnitTest1.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\DeliveryService.Api\DeliveryService.Api.csproj" />
+    <ProjectReference Include="..\..\src\DeliveryService.Contracts\DeliveryService.Contracts.csproj" />
+  </ItemGroup>
+</Project>

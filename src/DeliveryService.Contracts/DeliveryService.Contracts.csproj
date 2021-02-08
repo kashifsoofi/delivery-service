@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <IsPackable>true</IsPackable>
+    <PackageId>DeliveryService.Contracts</PackageId>
+    <Authors>Kashif Soofi</Authors>
+    <Description>DeliveryService Contracts</Description>
+    <Version>$(Version)</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Messages\" />
+    <Folder Include="Messages\Commands\" />
+    <Folder Include="Messages\Events\" />
+    <Folder Include="Responses\" />
+    <Folder Include="Requests\" />
+  </ItemGroup>
+</Project>
