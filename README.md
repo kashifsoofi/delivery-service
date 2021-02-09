@@ -1,30 +1,39 @@
-# webapi-service-template
-This is `dotnet new` template for a ASP.NET Core Web API service.
+# Delivery Service
 
 ## Usage
 1. Clone repository locally
-2. Install template for `dotnet new` using following command  
-`dotnet new -i [Absolute path to repository]/webapi-service-template`
-3. Create new project using template  
-`dotnet new -s [ServiceName]`
-4. Uninstall template using following command  
-`dotnet new -u [Absolute path to repository]/webapi-service-template`
+2. Open Powershell command at the root of Directory and issue following command to start MySql database in a docker container  
+`dev-env start`
+3. Open `DeliveryService.sln` in Visual Studio  
+4. Set `DeliveryService.Api` and `DeliveryService.Host` as startup projects  
+5. Debug would start web browser with Api Url and Host would start a command window  
+6. After finishing issue following command to stop and close database container  
+`dev-env stop`
 
-## Initialize DB
-1. build docker image  
-`docker build . -t webapi-service:db`
-2. run docker image to run migrations on MySql server exposed on localhost  
-`docker run webapi-service:db -cs "Server=host.docker.internal; Database=webapiservice; Uid=<uid>; Pwd=<pwd>;"`
+## Project Structure
+### Contracts
+This project contains commands, events and common classes to perform operations expected by this service.  
 
-## Publish nuget packages from docker
-1. build docker image  
-`docker build --build-arg Version=0.1.0 -t template.publisher . -f Dockerfile.Publisher`
-2. run docker image to publish nuget packages  
-`docker run -t -v ~/myfeed:/myfeed template.publisher:latest --source /myfeed`  
-Or with key  
-`docker run -t -v ~/myfeed:/myfeed template.publisher:latest --source /myfeed -k <apiKey>`
+### Domain
+This project contains aggregate that this service is responsible for. Aggregate implements data and business checks and for each change creates an event.  
 
+### Infrastructure
+This project contains code that is not part of domain and mainly interacts with external systems e.g. database.  
 
-## References & Resources
-* https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-new?tabs=netcore22
-* https://github.com/dotnet/dotnet-template-samples
+### Api
+This is WebApi project that exposes rest endpoints to perform CRUD operations on Delivery data. Api directly reads data from database with help of Queries and for updates (create/update) sends commands to Host (Message Processor).  
+
+### Host
+This is a commandline application. This is message processor of the system. It implements Handlers that listen for commands sent by Api and perform those opertions on Delivery aggregate.  
+
+### Database
+MySql container is used for storage, to use a differnt storage layer, main changes would be in sql, Query classes and aggregate repository.  
+
+## Assumptions & Observations
+* Only state is updateable through Update opertion  
+* Create endpoint is expecting `Recipient` and `Order` as part of request for simplicity (and completion of this task). This maybe the case depending on the design or these can be retrieved from appropriate services requiring only `ids` of recipient & order be passed in create request  
+* Expire method on aggregate is implented, this can be triggered by a background job e.g. using Hangfire that periodically checks for expired deliveries and send command to mark those as expired  
+* Separate endpoints are implemented to change state to make it easy to check for access (user/partner)  
+
+## Further
+* Api & Host are containerised, but in order to make service work in containers NServiceBus would need to be configured to use a shared transport (or mount .learning folder on both containers)  
