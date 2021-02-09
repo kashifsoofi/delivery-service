@@ -24,7 +24,4 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\DeliveryService.Infrastructure\DeliveryService.Infrastructure.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Delivery\" />
-  </ItemGroup>
 </Project>

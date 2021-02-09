@@ -1,7 +1,7 @@
-namespace DeliveryService.Domain.Aggregates.Delivery
+namespace DeliveryService.Contracts.Messages
 {
     using System;
-    
+
     public class AccessWindow
     {
         public DateTime StartTime { get; set; }

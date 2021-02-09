@@ -3,7 +3,7 @@ FROM mcr.microsoft.com/dotnet/core/sdk:2.2-alpine
 ENV PATH="$PATH:/root/.dotnet/tools"
 
 RUN dotnet tool install -g dotnet-script
-RUN dotnet tool install -g dotnet-roundhouse
+RUN dotnet tool install -g dotnet-roundhouse --version 1.2.1
 
 WORKDIR /db
 

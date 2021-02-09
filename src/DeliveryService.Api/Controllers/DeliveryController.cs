@@ -1,54 +1,90 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
-using DeliveryService.Contracts.Requests;
-using DeliveryService.Contracts.Responses;
-
-namespace DeliveryService.Api.Controllers
+﻿namespace DeliveryService.Api.Controllers
 {
-    [Route("api/[controller]")]
+    using System;
+    using System.Collections.Generic;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Mvc;
+    using DeliveryService.Contracts.Messages.Commands;
+    using DeliveryService.Contracts.Requests;
+    using DeliveryService.Contracts.Responses;
+    using DeliveryService.Infrastructure.Messages.Responses;
+    using DeliveryService.Infrastructure.Queries;
+    using NServiceBus;
+
+    [Route("[controller]")]
     [ApiController]
     public class DeliveryController : ControllerBase
     {
-        // GET api/aggreatename
+        private IMessageSession messageSession;
+        private IGetAllDeliveriesQuery getAllDeliveriesQuery;
+        private IGetDeliveryByIdQuery getDeliveryByIdQuery;
+
+        public DeliveryController(IMessageSession messageSession, IGetAllDeliveriesQuery getAllDeliveriesQuery, IGetDeliveryByIdQuery getDeliveryByIdQuery)
+        {
+            this.messageSession = messageSession;
+            this.getAllDeliveriesQuery = getAllDeliveriesQuery;
+            this.getDeliveryByIdQuery = getDeliveryByIdQuery;
+        }
+
         [HttpGet]
-        public IActionResult Get()
+        public async Task<ActionResult<Delivery>> Get()
         {
-            var aggregatenames = new List<Delivery>
-            {
-                new Delivery { Id = Guid.NewGuid(), CreatedOn = DateTime.UtcNow, UpdatedOn = DateTime.UtcNow },
-                new Delivery { Id = Guid.NewGuid(), CreatedOn = DateTime.UtcNow, UpdatedOn = DateTime.UtcNow },
-            };
-            return Ok(aggregatenames);
+            // Enforce security
+
+            var result = await this.getAllDeliveriesQuery.ExecuteAsync();
+            return new OkObjectResult(result);
         }
 
-        // GET api/aggregatename/5
         [HttpGet("{id}")]
-        public IActionResult Get(Guid id)
+        public async Task<ActionResult<Delivery>> Get(Guid id)
         {
-            var aggregatename = new Delivery { Id = id, CreatedOn = DateTime.UtcNow, UpdatedOn = DateTime.UtcNow };
-            return Ok(aggregatename);
+            var result = await getDeliveryByIdQuery.ExecuteAsync(id);
+
+            return result == null ? (ActionResult)this.NotFound() : this.Ok(result);
         }
 
-        // POST api/aggreatename
         [HttpPost]
-        public IActionResult Post([FromBody] CreateDeliveryRequest request)
+        public async Task<ActionResult<Delivery>> Post([FromBody] CreateDeliveryRequest request)
         {
-            var aggregatename = new Delivery { Id = request.Id, CreatedOn = DateTime.UtcNow, UpdatedOn = DateTime.UtcNow };
-            return CreatedAtAction("Get", new { id = aggregatename.Id }, aggregatename);
+            var createDeliveryCommand =
+                new CreateDelivery(request.Id, request.State, request.AccessWindow, request.Recipient, request.Order);
+            
+            var result = await this.messageSession
+                .Request<ConfirmationResponse>(createDeliveryCommand, new SendOptions(), CancellationToken.None)
+                .ConfigureAwait(false);
+            if (!result.Success)
+            {
+                throw result.Exception;
+            }
+
+            var delivery = await getDeliveryByIdQuery.ExecuteAsync(request.Id);
+            return CreatedAtAction("delivery", new { id = request.Id }, delivery);
         }
 
-        // PUT api/aggreatename/5
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody] string value)
+        public async Task<ActionResult<Delivery>> Put(Guid id, [FromBody] UpdateDeliveryRequest request)
         {
-            return NoContent();
+            var updateDeliveryCommand = new UpdateDelivery(id, request.State, request.AccessWindow, request.Recipient, request.Order);
+
+            var result = await this.messageSession
+                .Request<ConfirmationResponse>(updateDeliveryCommand, new SendOptions(), CancellationToken.None)
+                .ConfigureAwait(false);
+            if (!result.Success)
+            {
+                throw result.Exception;
+            }
+
+            var delivery = await getDeliveryByIdQuery.ExecuteAsync(id);
+            return new OkObjectResult(delivery);
         }
 
-        // DELETE api/aggreatename/5
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(Guid id)
         {
+            var deleteDeliveryCommand = new DeleteDelivery(id);
+            await this.messageSession.Send(deleteDeliveryCommand);
+
             return NoContent();
         }
     }

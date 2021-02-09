@@ -6,6 +6,9 @@ using Microsoft.Extensions.Hosting;
 
 namespace DeliveryService.Host
 {
+    using Autofac.Extensions.DependencyInjection;
+    using NServiceBus;
+
     class Program
     {
         public static async Task Main(string[] args)
@@ -29,7 +32,24 @@ namespace DeliveryService.Host
                     configApp.AddCommandLine(args);
                 })
                 .UseServiceProviderFactory(new AutofacServiceProviderFactory())
-                .ConfigureContainer<ContainerBuilder>(Startup.ConfigureContainer)
+                .ConfigureContainer<ContainerBuilder>((hostBuilderContext, containerBuilder) =>
+                {
+                    var startup = new Startup(hostBuilderContext.Configuration);
+                    startup.ConfigureContainer(containerBuilder);
+                })
+                .UseNServiceBus(context =>
+                {
+                    var endpointConfiguration = new EndpointConfiguration("DeliveryService.Host");
+
+                    var conventions = endpointConfiguration.Conventions();
+                    conventions.DefiningCommandsAs(type => type.Namespace == "DeliveryService.Contracts.Messages.Commands");
+                    conventions.DefiningEventsAs(type => type.Namespace == "DeliveryService.Contracts.Messages.Events");
+
+                    endpointConfiguration.UsePersistence<InMemoryPersistence>();
+                    endpointConfiguration.UseTransport<LearningTransport>();
+
+                    return endpointConfiguration;
+                })
                 .UseConsoleLifetime()
                 .Build();
 

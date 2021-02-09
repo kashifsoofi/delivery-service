@@ -6,8 +6,21 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Delivery\" />
-    <Folder Include="Database\" />
+    <None Remove="AggregateRepositories\Delivery\Sql\CreateDelivery.sql" />
+    <None Remove="AggregateRepositories\Delivery\Sql\DeleteDelivery.sql" />
+    <None Remove="AggregateRepositories\Delivery\Sql\GetDeliveryById.sql" />
+    <None Remove="AggregateRepositories\Delivery\Sql\UpdateDelivery.sql" />
+    <None Remove="Queries\Sql\GetAllDeliveries.sql" />
+    <None Remove="Queries\Sql\GetDeliveryById.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="AggregateRepositories\Delivery\Sql\DeleteDelivery.sql" />
+    <EmbeddedResource Include="AggregateRepositories\Delivery\Sql\UpdateDelivery.sql" />
+    <EmbeddedResource Include="AggregateRepositories\Delivery\Sql\CreateDelivery.sql" />
+    <EmbeddedResource Include="AggregateRepositories\Delivery\Sql\GetDeliveryById.sql" />
+    <EmbeddedResource Include="Queries\Sql\GetAllDeliveries.sql" />
+    <EmbeddedResource Include="Queries\Sql\GetDeliveryById.sql" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DeliveryService.Domain\DeliveryService.Domain.csproj" />
@@ -16,5 +29,6 @@
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.35" />
     <PackageReference Include="MySqlConnector" Version="1.1.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
 </Project>

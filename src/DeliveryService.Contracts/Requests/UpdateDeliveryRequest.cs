@@ -1,14 +1,10 @@
-﻿namespace DeliveryService.Contracts.Responses
+﻿namespace DeliveryService.Contracts.Requests
 {
-    using System;
     using DeliveryService.Contracts.Enums;
     using DeliveryService.Contracts.Messages;
 
-    public class Delivery
+    public class UpdateDeliveryRequest
     {
-        public Guid Id { get; set; }
-        public DateTime CreatedOn { get; set; }
-        public DateTime UpdatedOn { get; set; }
         public DeliveryState State { get; set; }
         public AccessWindow AccessWindow { get; set; }
         public Recipient Recipient { get; set; }
