@@ -15,6 +15,10 @@
 
         void Create(CreateDelivery command);
 
+        void UpdateDeliveryState(UpdateDeliveryState command);
+
+        void Delete();
+
         List<IAggregateEvent> UncommittedEvents { get; }
     }
 }

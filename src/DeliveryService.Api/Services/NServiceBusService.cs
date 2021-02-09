@@ -52,7 +52,7 @@
 
             var routing = transport.Routing();
             routing.RouteToEndpoint(typeof(CreateDelivery), "DeliveryService.Host");
-            routing.RouteToEndpoint(typeof(UpdateDelivery), "DeliveryService.Host");
+            routing.RouteToEndpoint(typeof(UpdateDeliveryState), "DeliveryService.Host");
             routing.RouteToEndpoint(typeof(DeleteDelivery), "DeliveryService.Host");
 
             endpointConfiguration.MakeInstanceUniquelyAddressable("api");

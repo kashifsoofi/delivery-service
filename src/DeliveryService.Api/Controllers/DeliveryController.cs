@@ -5,6 +5,7 @@
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
+    using DeliveryService.Contracts.Enums;
     using DeliveryService.Contracts.Messages.Commands;
     using DeliveryService.Contracts.Requests;
     using DeliveryService.Contracts.Responses;
@@ -65,7 +66,61 @@
         [HttpPut("{id}")]
         public async Task<ActionResult<Delivery>> Put(Guid id, [FromBody] UpdateDeliveryRequest request)
         {
-            var updateDeliveryCommand = new UpdateDelivery(id, request.State, request.AccessWindow, request.Recipient, request.Order);
+            var updateDeliveryCommand = new UpdateDeliveryState(id, request.State );
+
+            var result = await this.messageSession
+                .Request<ConfirmationResponse>(updateDeliveryCommand, new SendOptions(), CancellationToken.None)
+                .ConfigureAwait(false);
+            if (!result.Success)
+            {
+                throw result.Exception;
+            }
+
+            var delivery = await getDeliveryByIdQuery.ExecuteAsync(id);
+            return new OkObjectResult(delivery);
+        }
+
+        [HttpPut("{id}:approve")]
+        public async Task<ActionResult<Delivery>> Approve(Guid id)
+        {
+            // Validate User
+            var updateDeliveryCommand = new UpdateDeliveryState(id, DeliveryState.Approved );
+
+            var result = await this.messageSession
+                .Request<ConfirmationResponse>(updateDeliveryCommand, new SendOptions(), CancellationToken.None)
+                .ConfigureAwait(false);
+            if (!result.Success)
+            {
+                throw result.Exception;
+            }
+
+            var delivery = await getDeliveryByIdQuery.ExecuteAsync(id);
+            return new OkObjectResult(delivery);
+        }
+
+        [HttpPut("{id}:complete")]
+        public async Task<ActionResult<Delivery>> Complete(Guid id)
+        {
+            // Validate Partner
+            var updateDeliveryCommand = new UpdateDeliveryState(id, DeliveryState.Completed );
+
+            var result = await this.messageSession
+                .Request<ConfirmationResponse>(updateDeliveryCommand, new SendOptions(), CancellationToken.None)
+                .ConfigureAwait(false);
+            if (!result.Success)
+            {
+                throw result.Exception;
+            }
+
+            var delivery = await getDeliveryByIdQuery.ExecuteAsync(id);
+            return new OkObjectResult(delivery);
+        }
+
+        [HttpPut("{id}:cancel")]
+        public async Task<ActionResult<Delivery>> Cancel(Guid id)
+        {
+            // Validate User or Partner
+            var updateDeliveryCommand = new UpdateDeliveryState(id, DeliveryState.Cancelled );
 
             var result = await this.messageSession
                 .Request<ConfirmationResponse>(updateDeliveryCommand, new SendOptions(), CancellationToken.None)

@@ -1,19 +1,19 @@
-﻿namespace DeliveryService.Contracts.Messages.Commands
+﻿namespace DeliveryService.Contracts.Messages.Events
 {
     using System;
     using DeliveryService.Contracts.Enums;
 
-    public class UpdateDelivery
+    public class DeliveryDeleted : AggregateEvent, IDeliveryDeleted
     {
         public Guid Id { get; }
-        public DeliveryState State { get; set; }
+        public DeliveryState State { get; }
         public AccessWindow AccessWindow { get; }
         public Recipient Recipient { get; }
         public Order Order { get; }
 
-        public UpdateDelivery(Guid id, DeliveryState state, AccessWindow accessWindow, Recipient recipient, Order order)
+        public DeliveryDeleted(Guid id, DeliveryState state, AccessWindow accessWindow, Recipient recipient, Order order)
         {
-            Id = id;
+            this.Id = id;
             this.State = state;
             this.AccessWindow = accessWindow;
             this.Recipient = recipient;

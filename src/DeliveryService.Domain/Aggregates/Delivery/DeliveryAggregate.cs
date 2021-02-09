@@ -52,6 +52,57 @@
             Apply(evt, Handle);
         }
 
+        public void UpdateDeliveryState(UpdateDeliveryState command)
+        {
+            if (this.isNew)
+            {
+                throw new Exception("Delivery does not exist.");
+            }
+
+            if (command.State == DeliveryState.Approved &&
+                state.State != DeliveryState.Created)
+            {
+                throw new Exception("Only Delivery in Created state can be Approved.");
+            }
+
+            if (command.State == DeliveryState.Completed &&
+                state.State != DeliveryState.Approved)
+            {
+                throw new Exception("Only Delivery in Approved state can be Completed.");
+            }
+
+            if (command.State == DeliveryState.Cancelled &&
+                (state.State != DeliveryState.Created || state.State != DeliveryState.Approved))
+            {
+                throw new Exception("Only Delivery in Pending (Created, Approved) state can be Cancelled.");
+            }
+
+            if (command.State == DeliveryState.Expired &&
+                (state.State != DeliveryState.Completed && state.AccessWindow.EndTime >= DateTime.UtcNow))
+            {
+                throw new Exception("Only Delivery not in Completed state after access window time can be Expired.");
+            }
+
+            var evt = new DeliveryStateUpdated(Id, command.State);
+            Apply(evt, Handle);
+        }
+
+        public void Delete()
+        {
+            if (this.isNew)
+            {
+                throw new Exception("Delivery does not exist.");
+            }
+
+            var evt = new DeliveryDeleted(
+                state.Id,
+                state.State,
+                state.AccessWindow,
+                state.Recipient,
+                state.Order);
+            Apply(evt, Handle);
+        }
+
         private void Apply<T>(T evt, Action<T> handler) where T : IAggregateEvent
         {
             handler(evt);
@@ -66,6 +117,16 @@
             this.state.AccessWindow = evt.AccessWindow;
             this.state.Recipient = evt.Recipient;
             this.state.Order = evt.Order;
+        }
+
+        private void Handle(DeliveryStateUpdated evt)
+        {
+            this.state.UpdatedOn = evt.Timestamp;
+            this.state.State = evt.State;
+        }
+
+        private void Handle(DeliveryDeleted evt)
+        {
         }
     }
 }
