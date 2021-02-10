@@ -2,6 +2,7 @@
 {
     using System.IO;
     using System.Threading.Tasks;
+    using DeliveryService.Contracts.Messages.Commands;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Hosting;
     using NServiceBus;
@@ -43,7 +44,14 @@
                     conventions.DefiningMessagesAs(type => type.Namespace == "DeliveryService.Infrastructure.Messages.Responses");
 
                     endpointConfiguration.UsePersistence<LearningPersistence>();
-                    endpointConfiguration.UseTransport<LearningTransport>();
+                    var transport = endpointConfiguration.UseTransport<LearningTransport>();
+
+                    var routing = transport.Routing();
+                    routing.RouteToEndpoint(typeof(UpdateDeliveryState), "DeliveryService.Host");
+
+                    endpointConfiguration.Recoverability()
+                        .Delayed(x => x.NumberOfRetries(0))
+                        .Immediate(x => x.NumberOfRetries(0));
 
                     return endpointConfiguration;
                 })

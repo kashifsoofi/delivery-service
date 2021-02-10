@@ -32,7 +32,7 @@ MySql container is used for storage, to use a differnt storage layer, main chang
 ## Assumptions & Observations
 * Only state is updateable through Update opertion  
 * Create endpoint is expecting `Recipient` and `Order` as part of request for simplicity (and completion of this task). This maybe the case depending on the design or these can be retrieved from appropriate services requiring only `ids` of recipient & order be passed in create request  
-* Expire method on aggregate is implented, this can be triggered by a background job e.g. using Hangfire that periodically checks for expired deliveries and send command to mark those as expired  
+* Expire method on aggregate is implented, this is triggered by a background job, an improvement can be to use Hangfire  
 * Separate endpoints are implemented to change state to make it easy to check for access (user/partner)  
 
 ## Further

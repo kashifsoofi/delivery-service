@@ -4,8 +4,10 @@
     using DeliveryService.Contracts.Messages;
     using Microsoft.Extensions.DependencyInjection;
     using DeliveryService.Domain.Aggregates.Delivery;
+    using DeliveryService.Host.Services;
     using DeliveryService.Infrastructure.AggregateRepositories.Delivery;
     using DeliveryService.Infrastructure.Database;
+    using DeliveryService.Infrastructure.Queries;
     using Microsoft.Extensions.Configuration;
 
     public class Startup
@@ -29,6 +31,9 @@
 
             services.AddSingleton<IDeliveryAggregateFactory, DeliveryAggregateFactory>();
             services.AddSingleton<IDeliveryAggregateRepository, DeliveryRepository>();
+            services.AddSingleton<IGetExpiredDeliveryIdsQuery, GetExpiredDeliveryIdsQuery>();
+
+            services.AddHostedService<ExpireDeliveriesService>();
         }
     }
 }

@@ -12,6 +12,7 @@
     <None Remove="AggregateRepositories\Delivery\Sql\UpdateDelivery.sql" />
     <None Remove="Queries\Sql\GetAllDeliveries.sql" />
     <None Remove="Queries\Sql\GetDeliveryById.sql" />
+    <None Remove="Queries\Sql\GetExpiredDeliveryIds.sql" />
   </ItemGroup>
 
   <ItemGroup>
@@ -19,6 +20,7 @@
     <EmbeddedResource Include="AggregateRepositories\Delivery\Sql\UpdateDelivery.sql" />
     <EmbeddedResource Include="AggregateRepositories\Delivery\Sql\CreateDelivery.sql" />
     <EmbeddedResource Include="AggregateRepositories\Delivery\Sql\GetDeliveryById.sql" />
+    <EmbeddedResource Include="Queries\Sql\GetExpiredDeliveryIds.sql" />
     <EmbeddedResource Include="Queries\Sql\GetAllDeliveries.sql" />
     <EmbeddedResource Include="Queries\Sql\GetDeliveryById.sql" />
   </ItemGroup>

@@ -56,7 +56,11 @@
             routing.RouteToEndpoint(typeof(UpdateDeliveryState), "DeliveryService.Host");
             routing.RouteToEndpoint(typeof(DeleteDelivery), "DeliveryService.Host");
 
-            endpointConfiguration.MakeInstanceUniquelyAddressable("api");
+            endpointConfiguration.MakeInstanceUniquelyAddressable("1");
+
+            endpointConfiguration.Recoverability()
+                .Delayed(x => x.NumberOfRetries(0))
+                .Immediate(x => x.NumberOfRetries(0));
 
             return endpointConfiguration;
         }

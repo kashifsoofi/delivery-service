@@ -7,7 +7,6 @@
     using DeliveryService.Contracts.Messages.Commands;
     using DeliveryService.Contracts.Requests;
     using DeliveryService.Contracts.Responses;
-    using DeliveryService.Infrastructure.Messages.Responses;
     using DeliveryService.Infrastructure.Queries;
     using NServiceBus;
 
@@ -15,9 +14,9 @@
     [ApiController]
     public class DeliveryController : ControllerBase
     {
-        private IMessageSession messageSession;
-        private IGetAllDeliveriesQuery getAllDeliveriesQuery;
-        private IGetDeliveryByIdQuery getDeliveryByIdQuery;
+        private readonly IMessageSession messageSession;
+        private readonly IGetAllDeliveriesQuery getAllDeliveriesQuery;
+        private readonly IGetDeliveryByIdQuery getDeliveryByIdQuery;
 
         public DeliveryController(IMessageSession messageSession, IGetAllDeliveriesQuery getAllDeliveriesQuery, IGetDeliveryByIdQuery getDeliveryByIdQuery)
         {
