@@ -3,12 +3,12 @@
 ## Usage
 1. Clone repository locally
 2. Open Powershell command at the root of Directory and issue following command to start MySql database in a docker container  
-`dev-env start`
+`.\dev-env.ps1 start`
 3. Open `DeliveryService.sln` in Visual Studio  
 4. Set `DeliveryService.Api` and `DeliveryService.Host` as startup projects  
 5. Debug would start web browser with Api Url and Host would start a command window  
 6. After finishing issue following command to stop and close database container  
-`dev-env stop`
+`.\dev-env.ps1 stop`
 
 ## Project Structure
 ### Contracts

@@ -2,9 +2,9 @@
 {
     public class ConnectionStringProvider : IConnectionStringProvider
     {
-        private readonly DatabaseOptions databaseOptions;
+        private readonly IDatabaseOptions databaseOptions;
 
-        public ConnectionStringProvider(DatabaseOptions databaseOptions)
+        public ConnectionStringProvider(IDatabaseOptions databaseOptions)
         {
             this.databaseOptions = databaseOptions;
         }

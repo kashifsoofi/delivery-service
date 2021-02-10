@@ -83,7 +83,7 @@
                     aggregate.Id,
                 };
 
-                await connection.ExecuteAsync(this.sqlHelper.GetSqlFromEmbeddedResource("UpdateDelivery"), parameters,
+                await connection.ExecuteAsync(this.sqlHelper.GetSqlFromEmbeddedResource("DeleteDelivery"), parameters,
                     commandType: CommandType.Text);
             }
         }

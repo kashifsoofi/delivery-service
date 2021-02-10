@@ -1,12 +1,9 @@
-﻿using System.IO;
-using System.Threading.Tasks;
-using Autofac;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
-
-namespace DeliveryService.Host
+﻿namespace DeliveryService.Host
 {
-    using Autofac.Extensions.DependencyInjection;
+    using System.IO;
+    using System.Threading.Tasks;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.Hosting;
     using NServiceBus;
 
     class Program
@@ -31,11 +28,10 @@ namespace DeliveryService.Host
                     configApp.AddEnvironmentVariables(prefix: "PREFIX_");
                     configApp.AddCommandLine(args);
                 })
-                .UseServiceProviderFactory(new AutofacServiceProviderFactory())
-                .ConfigureContainer<ContainerBuilder>((hostBuilderContext, containerBuilder) =>
+                .ConfigureServices((hostBuilderContext, services) =>
                 {
                     var startup = new Startup(hostBuilderContext.Configuration);
-                    startup.ConfigureContainer(containerBuilder);
+                    startup.ConfigureServices(services);
                 })
                 .UseNServiceBus(context =>
                 {
@@ -44,8 +40,9 @@ namespace DeliveryService.Host
                     var conventions = endpointConfiguration.Conventions();
                     conventions.DefiningCommandsAs(type => type.Namespace == "DeliveryService.Contracts.Messages.Commands");
                     conventions.DefiningEventsAs(type => type.Namespace == "DeliveryService.Contracts.Messages.Events");
+                    conventions.DefiningMessagesAs(type => type.Namespace == "DeliveryService.Infrastructure.Messages.Responses");
 
-                    endpointConfiguration.UsePersistence<InMemoryPersistence>();
+                    endpointConfiguration.UsePersistence<LearningPersistence>();
                     endpointConfiguration.UseTransport<LearningTransport>();
 
                     return endpointConfiguration;

@@ -4,7 +4,6 @@
     using System.Linq;
     using System.Threading.Tasks;
     using DeliveryService.Contracts.Messages.Commands;
-    using DeliveryService.Contracts.Messages.Events;
     using DeliveryService.Domain.Aggregates.Delivery;
     using DeliveryService.Infrastructure.Messages.Responses;
     using NServiceBus;
@@ -36,7 +35,8 @@
             }
             catch (Exception e)
             {
-                await context.Reply(new ConfirmationResponse { Success = false, Exception = e});
+                Console.WriteLine($"Exception in UpdateDeliveryStateCommandHandler: {e}");
+                throw;
             }
         }
 

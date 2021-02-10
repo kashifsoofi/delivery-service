@@ -45,8 +45,9 @@
             var conventions = endpointConfiguration.Conventions();
             conventions.DefiningCommandsAs(type => type.Namespace == "DeliveryService.Contracts.Messages.Commands");
             conventions.DefiningEventsAs(type => type.Namespace == "DeliveryService.Contracts.Messages.Events");
+            conventions.DefiningMessagesAs(type => type.Namespace == "DeliveryService.Infrastructure.Messages.Responses");
 
-            endpointConfiguration.UsePersistence<InMemoryPersistence>();
+            endpointConfiguration.UsePersistence<LearningPersistence>();
 
             var transport = endpointConfiguration.UseTransport<LearningTransport>();
 

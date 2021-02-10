@@ -44,7 +44,6 @@
             services.AddControllers();
 
             services.AddHostedService<NServiceBusService>();
-            services.AddSingleton<IHostedService, NServiceBusService>();
             services.AddSingleton(provider =>
             {
                 var nServiceBusService = provider.GetService<IHostedService>() as NServiceBusService;
@@ -81,7 +80,7 @@
 
         public void ConfigureContainer(ContainerBuilder builder)
         {
-            builder.Register(ctx => Configuration.GetSection("Database").Get<DatabaseOptions>()).SingleInstance();
+            builder.Register<IDatabaseOptions>(ctx => Configuration.GetSection("Database").Get<DatabaseOptions>()).AsSelf().SingleInstance();
             builder.RegisterType<ConnectionStringProvider>().As<IConnectionStringProvider>().SingleInstance();
             builder.RegisterType<GetDeliveryByIdQuery>().As<IGetDeliveryByIdQuery>().SingleInstance();
             builder.RegisterType<GetAllDeliveriesQuery>().As<IGetAllDeliveriesQuery>().SingleInstance();

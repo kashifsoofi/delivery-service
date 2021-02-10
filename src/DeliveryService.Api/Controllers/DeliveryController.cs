@@ -1,8 +1,6 @@
 ﻿namespace DeliveryService.Api.Controllers
 {
     using System;
-    using System.Collections.Generic;
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
     using DeliveryService.Contracts.Enums;
@@ -50,17 +48,10 @@
         {
             var createDeliveryCommand =
                 new CreateDelivery(request.Id, request.State, request.AccessWindow, request.Recipient, request.Order);
-            
-            var result = await this.messageSession
-                .Request<ConfirmationResponse>(createDeliveryCommand, new SendOptions(), CancellationToken.None)
-                .ConfigureAwait(false);
-            if (!result.Success)
-            {
-                throw result.Exception;
-            }
 
-            var delivery = await getDeliveryByIdQuery.ExecuteAsync(request.Id);
-            return CreatedAtAction("delivery", new { id = request.Id }, delivery);
+            await this.messageSession.Send(createDeliveryCommand);
+
+            return Accepted();
         }
 
         [HttpPut("{id}")]
@@ -68,16 +59,9 @@
         {
             var updateDeliveryCommand = new UpdateDeliveryState(id, request.State );
 
-            var result = await this.messageSession
-                .Request<ConfirmationResponse>(updateDeliveryCommand, new SendOptions(), CancellationToken.None)
-                .ConfigureAwait(false);
-            if (!result.Success)
-            {
-                throw result.Exception;
-            }
+            await this.messageSession.Send(updateDeliveryCommand);
 
-            var delivery = await getDeliveryByIdQuery.ExecuteAsync(id);
-            return new OkObjectResult(delivery);
+            return Accepted();
         }
 
         [HttpPut("{id}:approve")]
@@ -86,16 +70,9 @@
             // Validate User
             var updateDeliveryCommand = new UpdateDeliveryState(id, DeliveryState.Approved );
 
-            var result = await this.messageSession
-                .Request<ConfirmationResponse>(updateDeliveryCommand, new SendOptions(), CancellationToken.None)
-                .ConfigureAwait(false);
-            if (!result.Success)
-            {
-                throw result.Exception;
-            }
+            await this.messageSession.Send(updateDeliveryCommand);
 
-            var delivery = await getDeliveryByIdQuery.ExecuteAsync(id);
-            return new OkObjectResult(delivery);
+            return Accepted();
         }
 
         [HttpPut("{id}:complete")]
@@ -104,16 +81,9 @@
             // Validate Partner
             var updateDeliveryCommand = new UpdateDeliveryState(id, DeliveryState.Completed );
 
-            var result = await this.messageSession
-                .Request<ConfirmationResponse>(updateDeliveryCommand, new SendOptions(), CancellationToken.None)
-                .ConfigureAwait(false);
-            if (!result.Success)
-            {
-                throw result.Exception;
-            }
+            await this.messageSession.Send(updateDeliveryCommand);
 
-            var delivery = await getDeliveryByIdQuery.ExecuteAsync(id);
-            return new OkObjectResult(delivery);
+            return Accepted();
         }
 
         [HttpPut("{id}:cancel")]
@@ -122,16 +92,9 @@
             // Validate User or Partner
             var updateDeliveryCommand = new UpdateDeliveryState(id, DeliveryState.Cancelled );
 
-            var result = await this.messageSession
-                .Request<ConfirmationResponse>(updateDeliveryCommand, new SendOptions(), CancellationToken.None)
-                .ConfigureAwait(false);
-            if (!result.Success)
-            {
-                throw result.Exception;
-            }
+            await this.messageSession.Send(updateDeliveryCommand);
 
-            var delivery = await getDeliveryByIdQuery.ExecuteAsync(id);
-            return new OkObjectResult(delivery);
+            return Accepted();
         }
 
         [HttpDelete("{id}")]

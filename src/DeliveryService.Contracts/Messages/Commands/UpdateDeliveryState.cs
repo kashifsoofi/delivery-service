@@ -5,7 +5,7 @@
 
     public class UpdateDeliveryState
     {
-        public Guid Id { get; }
+        public Guid Id { get; set; }
         public DeliveryState State { get; set; }
 
         public UpdateDeliveryState(Guid id, DeliveryState state)
