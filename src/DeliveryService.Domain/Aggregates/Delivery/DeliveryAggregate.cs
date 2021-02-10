@@ -35,7 +35,7 @@
         {
             if (command == null)
             {
-                throw new ArgumentException(nameof(command));
+                throw new ArgumentException("Command cannot be null", nameof(command));
             }
 
             if (!this.isNew)
@@ -54,33 +54,42 @@
 
         public void UpdateDeliveryState(UpdateDeliveryState command)
         {
+            if (command == null)
+            {
+                throw new ArgumentException("Command cannot be null", nameof(command));
+            }
+
             if (this.isNew)
             {
                 throw new Exception("Delivery does not exist.");
             }
 
-            if (command.State == DeliveryState.Approved &&
-                state.State != DeliveryState.Created)
+            switch (command.State)
             {
-                throw new Exception("Only Delivery in Created state can be Approved.");
-            }
-
-            if (command.State == DeliveryState.Completed &&
-                state.State != DeliveryState.Approved)
-            {
-                throw new Exception("Only Delivery in Approved state can be Completed.");
-            }
-
-            if (command.State == DeliveryState.Cancelled &&
-                (state.State != DeliveryState.Created || state.State != DeliveryState.Approved))
-            {
-                throw new Exception("Only Delivery in Pending (Created, Approved) state can be Cancelled.");
-            }
-
-            if (command.State == DeliveryState.Expired &&
-                (state.State != DeliveryState.Completed && state.AccessWindow.EndTime >= DateTime.UtcNow))
-            {
-                throw new Exception("Only Delivery not in Completed state after access window time can be Expired.");
+                case DeliveryState.Approved:
+                    if (state.State != DeliveryState.Created)
+                    {
+                        throw new Exception("Only Delivery in Created state can be Approved.");
+                    }
+                    break;
+                case DeliveryState.Completed:
+                    if (state.State != DeliveryState.Approved)
+                    {
+                        throw new Exception("Only Delivery in Approved state can be Completed.");
+                    }
+                    break;
+                case DeliveryState.Cancelled:
+                    if (state.State != DeliveryState.Created || state.State != DeliveryState.Approved)
+                    {
+                        throw new Exception("Only Delivery in Pending (Created, Approved) state can be Cancelled.");
+                    }
+                    break;
+                case DeliveryState.Expired:
+                    if (state.State == DeliveryState.Completed || state.AccessWindow.EndTime >= DateTime.UtcNow)
+                    {
+                        throw new Exception("Only Delivery not in Completed state after access window time can be Expired.");
+                    }
+                    break;
             }
 
             var evt = new DeliveryStateUpdated(Id, command.State);
